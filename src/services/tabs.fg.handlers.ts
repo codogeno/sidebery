@@ -273,8 +273,8 @@ async function onTabCreated(nativeTab: NativeTab, attached?: boolean) {
     checkIfSessionIsRestoring(tab)
     if (tab.checkingSessionRestore) {
       const sessionRestoreIsDetected = await tab.checkingSessionRestore
-      delete tab.checkingSessionRestore
-      delete tab.resolveSessionRestoreDetection
+      tab.checkingSessionRestore = undefined
+      tab.resolveSessionRestoreDetection = undefined
       if (sessionRestoreIsDetected) return
       notSessionRestore = true
     }
@@ -435,8 +435,8 @@ async function onTabCreated(nativeTab: NativeTab, attached?: boolean) {
       checkIfSessionIsRestoring(tab)
       if (maybeRestoredTabsDataQuerying && tab.checkingSessionRestore) {
         const sessionRestoreIsDetected = await tab.checkingSessionRestore
-        delete tab.checkingSessionRestore
-        delete tab.resolveSessionRestoreDetection
+        tab.checkingSessionRestore = undefined
+        tab.resolveSessionRestoreDetection = undefined
         if (sessionRestoreIsDetected) return
       }
     }
@@ -658,8 +658,6 @@ async function onTabCreated(nativeTab: NativeTab, attached?: boolean) {
     deferredActivationHandling.cb()
     deferredActivationHandling.cb = null
   }
-
-  if (panel) Tabs.decrementScrollRetainer(panel)
 
   if (attached && (tab.audible || tab.mediaPaused || tab.mutedInfo?.muted)) {
     Sidebar.updateMediaStateOfPanelDebounced(100, tab.panelId, tab)
@@ -1731,6 +1729,15 @@ function onTabActivated(info: browser.tabs.ActiveInfo): void {
 
   const panel = Sidebar.panelsById[tab.panelId]
   if (!Utils.isTabsPanel(panel)) return
+
+  // Update sticky tabs
+  if (Settings.stickyTabs) {
+    Tabs.calcStickyTabs(panel)
+    if (prevActive && prevActive.panelId !== panel.id) {
+      const prevPanel = Sidebar.panelsById[prevActive.panelId]
+      if (Utils.isTabsPanel(prevPanel)) Tabs.resetStickyTabs(prevPanel)
+    }
+  }
 
   // Update succession
   Tabs.updateSuccessionDebounced(0)

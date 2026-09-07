@@ -188,6 +188,12 @@ section(ref="el")
     :default="DEFAULT_SETTINGS.tabSwitchDelay"
     :or="0"
     @update:value="Settings.saveDebounced(500)")
+  ToggleField(
+    label="settings.sticky_active_tab"
+    dbg="stickyActiveTab"
+    v-model:value="Settings.state.stickyActiveTab"
+    :default="DEFAULT_SETTINGS.stickyActiveTab"
+    @update:value="Settings.saveDebounced(150)")
 
   .wrapper(ref="newTabPosEl")
     .sub-title: .text {{translate('settings.nav_settings_new_tab_position')}}
@@ -332,6 +338,32 @@ section(ref="el")
       :inactive="!Settings.state.tabsTree"
       :opts="Settings.getOpts('tabsTreeLimit')"
       @update:value="Settings.saveDebounced(150)")
+    ToggleField(
+      label="settings.sticky_ancestor_tabs"
+      dbg="stickyAncestorTabs"
+      v-model:value="Settings.state.stickyAncestorTabs"
+      :default="DEFAULT_SETTINGS.stickyAncestorTabs"
+      :inactive="!Settings.state.tabsTree"
+      @update:value="Settings.saveDebounced(150)")
+    .sub-fields
+      SelectField(
+        label="settings.sticky_ancestor_tabs_limit"
+        optLabel="settings.sticky_ancestor_tabs_limit_"
+        dbg="stickyAncestorTabsLimit"
+        v-model:value="Settings.state.stickyAncestorTabsLimit"
+        :default="DEFAULT_SETTINGS.stickyAncestorTabsLimit"
+        :inactive="!Settings.state.tabsTree || !Settings.state.stickyAncestorTabs"
+        :opts="Settings.getOpts('stickyAncestorTabsLimit')"
+        @update:value="Settings.saveDebounced(150)")
+      SelectField(
+        label="settings.sticky_ancestor_tabs_layout"
+        optLabel="settings.sticky_ancestor_tabs_layout_"
+        dbg="stickyAncestorTabsLayout"
+        v-model:value="Settings.state.stickyAncestorTabsLayout"
+        :default="DEFAULT_SETTINGS.stickyAncestorTabsLayout"
+        :inactive="!Settings.state.tabsTree || !Settings.state.stickyAncestorTabs"
+        :opts="Settings.getOpts('stickyAncestorTabsLayout')"
+        @update:value="Settings.saveDebounced(150)")
     ToggleField(
       label="settings.auto_fold_tabs"
       :inactive="!Settings.state.tabsTree"

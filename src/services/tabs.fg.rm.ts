@@ -64,7 +64,7 @@ export function removeTabsAbove(tabIds?: ID[]): void {
   if (!startTab || startTab.pinned) return
 
   const toRm = []
-  for (let i = startTab.index; i--; ) {
+  for (let i = startTab.index; i--;) {
     const tab = Tabs.list[i]
     if (!tab || tab.pinned || tab.panelId !== startTab.panelId) break
     toRm.push(tab.id)
@@ -349,10 +349,6 @@ export async function removeTabs(
       ctrl: translate('notif.undo_ctrl'),
       callback: async () => undoRemove(tabsInfo, parents),
     })
-  }
-
-  if (!Selection.isSet() && visibleLen > 0) {
-    Tabs.incrementScrollRetainer(panel, lastTabToo ? visibleLen - 1 : visibleLen)
   }
 
   // Reverse removing order (needed for reopening)
